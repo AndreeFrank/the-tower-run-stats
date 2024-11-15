@@ -1,2 +1,33 @@
-<input type="file" class="file-input"
-  (change)="onFileSelected($event)" #fileUpload>
+<input
+  type="file"
+  class="file-input"
+  (change)="onFileSelected($event)"
+  #fileUpload
+/>
+
+<div class="card">
+  <p-table
+    [value]="statData"
+    [resizableColumns]="true"
+    styleClass="p-datatable-gridlines"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th pResizableColumn pSortableColumn="tier">Tier</th>
+        <th pResizableColumn pSortableColumn="cash">Cash</th>
+        <th pResizableColumn pSortableColumn="cashPerHour">Cash/h</th>
+        <th pResizableColumn pSortableColumn="coins">Coins</th>
+        <th pResizableColumn pSortableColumn="coins">Coins/h</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-stat>
+      <tr>
+        <td>{{ stat.tier }}</td>
+        <td>{{ stat.cash }}</td>
+        <td>{{ stat.cashPerHour }}</td>
+        <td>{{ stat.coins }}</td>
+        <td>{{ stat.cph }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
