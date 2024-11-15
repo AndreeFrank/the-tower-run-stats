@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { concatMap, from } from 'rxjs';
 import { createWorker } from 'tesseract.js';
+import { AbbreviateLargeNumberPipe } from './abbriviate-large-number-pipe';
+import { LocalStorageService } from './local-storage-service';
+import { TableModule } from 'primeng/table';
 
 type NumSuffixes = 'K' | 'M' | 'B' | 'T' | 'q' | 'Q' | 's' | 'S';
 
@@ -16,54 +19,111 @@ type StatNames =
   | 'Damage Dealt';
 
 interface StatData {
-  id: number;
-  tier: number;
+  dateOfRun: number;
+  tier: string;
   time: number;
   wave: number;
-  coins: number;
-  cph: number;
-  cpw: number;
-  cells: number;
-  cellsPerHour: number;
-  cellsPerWave: number;
-  shards: number;
-  shardsPerHour: number;
-  shardsPerWave: number;
+  cash: string;
+  cashPerHour: string;
+  cashPerWave: string;
+  coins: string;
+  cph: string;
+  cpw: string;
+  cells: string;
+  cellsPerHour: string;
+  cellsPerWave: string;
+  shards: string;
+  shardsPerHour: string;
+  shardsPerWave: string;
   notes: string;
 }
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [],
+  imports: [TableModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   uniqueId: number = 0;
+  DATA_STORE_KEY = 'the-tower-run-data-v0';
+
+  statData: StatData[] = [];
+
+  constructor(private _localStorageService: LocalStorageService) {}
+
+  ngOnInit() {
+    let statDataStr = this._localStorageService.getData(this.DATA_STORE_KEY);
+    this.statData = Boolean(statDataStr)
+      ? JSON.parse(statDataStr as string)
+      : [];
+
+    console.log('INIT: ', this.statData);
+  }
 
   onFileSelected(event: any) {
     const file: File = event?.target?.files![0] || undefined;
-    console.log('FILE: ', file);
+    // let date = new Date(0);
+    // date.setUTCSeconds(file.lastModified);
+    // console.log('DATE: ', date);
 
+    let statDataStr = this._localStorageService.getData(this.DATA_STORE_KEY);
+    let statData: StatData[] = Boolean(statDataStr)
+      ? JSON.parse(statDataStr as string)
+      : [];
     from(createWorker('eng'))
       .pipe(concatMap((worker) => worker.recognize(file)))
       .subscribe((res) => {
         console.log('TEXT: ', res.data.text);
-        console.log(this._createStatObject(res.data.text));
+
+        let statObj = this._createStatObject(res.data.text, file.lastModified);
+        console.log(statObj);
+
+        if (
+          !statData.map((data) => data.dateOfRun).includes(statObj.dateOfRun)
+        ) {
+          console.log('SAVING');
+          statData.push(statObj);
+          this._localStorageService.saveData(
+            this.DATA_STORE_KEY,
+            JSON.stringify(statData)
+          );
+        } else {
+          console.log('ALREADY SAVED');
+        }
       });
   }
 
-  private _createStatObject(text: string) {
+  private _createStatObject(text: string, dateOfRun: number): StatData {
+    const alnp = new AbbreviateLargeNumberPipe();
+
+    let time = this._convertToNumber(this._findData('Real Time', text));
+    let wave = this._convertToNumber(this._findData('Wave', text));
+    let cash = this._convertToNumber(this._findData('Cash Earned', text));
+    let coins = this._convertToNumber(this._findData('Coins Earned', text));
+    let cells = this._convertToNumber(this._findData('Cells Earned', text));
+    let shards = this._convertToNumber(
+      this._findData('Reroll Shards Earned', text)
+    );
+
     return {
-      id: ++this.uniqueId,
+      dateOfRun,
       tier: this._findData('Tier', text),
-      time: this._findData('Real Time', text),
-      wave: this._findData('Wave', text),
-      cash: this._findData('Cash Earned', text),
-      coins: this._findData('Coins Earned', text),
-      cells: this._findData('Cells Earned', text),
-      shards: this._findData('Reroll Shards Earned', text),
+      time,
+      wave,
+      cash: alnp.transform(cash),
+      cashPerHour: alnp.transform(cash / time),
+      cashPerWave: alnp.transform(cash / wave),
+      coins: alnp.transform(coins),
+      cph: alnp.transform(coins / time),
+      cpw: alnp.transform(coins / wave),
+      cells: alnp.transform(cells),
+      cellsPerHour: alnp.transform(cells / time),
+      cellsPerWave: alnp.transform(cells / wave),
+      shards: alnp.transform(shards),
+      shardsPerHour: alnp.transform(shards / time),
+      shardsPerWave: alnp.transform(shards / wave),
       notes: '',
     };
   }
@@ -83,7 +143,27 @@ export class AppComponent {
       case 'Cells Earned':
       case 'Damage Taken':
       case 'Damage Dealt':
-        return textRow.split(' ')[2];
+        let split = textRow.split(' ');
+        let value = '';
+        if (split.length === 3) {
+          value = split[2];
+        } else {
+          // Sometimes there is an extra ' ' between number and suffix
+          value = split[2] + split[3];
+        }
+        let dotSplit = value.split(',');
+        // Sometimes a B can be read as an 8
+        if (
+          dotSplit.length === 2 &&
+          dotSplit[1].length === 3 &&
+          dotSplit[1].charAt(2) === '8'
+        ) {
+          value = `${dotSplit[0]}.${dotSplit[1].substring(
+            0,
+            dotSplit[1].length - 1
+          )}B`;
+        }
+        return value;
       case 'Reroll Shards Earned': {
         return textRow.split(' ')[3];
       }
@@ -109,5 +189,27 @@ export class AppComponent {
       parseInt(minutes) / 60 +
       parseInt(seconds) / 3600
     ).toFixed(2);
+  }
+
+  private _convertToNumber(numberStr: string): number {
+    numberStr = numberStr.replace('$', '');
+    numberStr = numberStr.replace(',', '.');
+
+    let base = parseFloat(numberStr);
+    if (numberStr.match(/K/)) {
+      return Math.round(base * 1000);
+    } else if (numberStr.match(/M/)) {
+      return Math.round(base * 1000000);
+    } else if (numberStr.match(/B/)) {
+      return Math.round(base * 1000000000);
+    } else if (numberStr.match(/T/)) {
+      return Math.round(base * 1000000000000);
+    } else if (numberStr.match(/q/)) {
+      return Math.round(base * 1000000000000000);
+    } else if (numberStr.match(/Q/)) {
+      return Math.round(base * 1000000000000000000);
+    }
+
+    return base;
   }
 }

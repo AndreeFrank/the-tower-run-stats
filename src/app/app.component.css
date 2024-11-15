@@ -10,3 +10,8 @@ header {
 .content {
   padding: var(--content-padding);
 }
+
+.data-cell {
+  display: flex;
+  justify-content: center;
+}

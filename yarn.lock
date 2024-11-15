@@ -5285,6 +5285,23 @@ pretty-bytes@^5.3.0:
   resolved "https://registry.yarnpkg.com/pretty-bytes/-/pretty-bytes-5.6.0.tgz#356256f643804773c82f64723fe78c92c62beaeb"
   integrity sha512-FFw039TmrBqFK8ma/7OL3sDz/VytdtJr044/QUJtH0wK9lb9jLq9tJyIxUwtQJHwar2BqtiA4iCWSwo9JLkzFg==
 
+primeflex@3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/primeflex/-/primeflex-3.3.1.tgz#361dddf6eb5db50d733e4cddd4b6e376a3d7bd68"
+  integrity sha512-zaOq3YvcOYytbAmKv3zYc+0VNS9Wg5d37dfxZnveKBFPr7vEIwfV5ydrpiouTft8MVW6qNjfkaQphHSnvgQbpQ==
+
+primeicons@7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/primeicons/-/primeicons-7.0.0.tgz#6b25c3fdcb29bb745a3035bdc1ed5902f4a419cf"
+  integrity sha512-jK3Et9UzwzTsd6tzl2RmwrVY/b8raJ3QZLzoDACj+oTJ0oX7L9Hy+XnVwgo4QVKlKpnP/Ur13SXV/pVh4LzaDw==
+
+primeng@17.18.12:
+  version "17.18.12"
+  resolved "https://registry.yarnpkg.com/primeng/-/primeng-17.18.12.tgz#7514caf46c2ad087b7c04202ab2013e44166b798"
+  integrity sha512-zElkv9c3209e1j2yNXalfv71gGJeo8c7bUuW3nsvtQZcYsXjdsJvBEhTThVghBdpCUoFYD3cNmTzg3t807cL6A==
+  dependencies:
+    tslib "^2.3.0"
+
 proc-log@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/proc-log/-/proc-log-3.0.0.tgz#fb05ef83ccd64fd7b20bbe9c8c1070fc08338dd8"
@@ -5613,13 +5630,6 @@ run-parallel@^1.1.9:
   integrity sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==
   dependencies:
     queue-microtask "^1.2.2"
-
-rxjs@7.8.0:
-  version "7.8.0"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.8.0.tgz#90a938862a82888ff4c7359811a595e14e1e09a4"
-  integrity sha512-F2+gxDshqmIub1KdvZkaEfGDwLNpPvk9Fs6LD/MyQxNgMds/WH9OdDDXOmxUZpME+iSK3rQCctkL0DYyytUqMg==
-  dependencies:
-    tslib "^2.1.0"
 
 rxjs@7.8.1, rxjs@^7.8.1:
   version "7.8.1"
