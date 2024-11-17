@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { concatMap, from } from 'rxjs';
 import { createWorker } from 'tesseract.js';
 import { AbbreviateLargeNumberPipe } from './abbriviate-large-number-pipe';
 import { LocalStorageService } from './local-storage-service';
 import { TableModule } from 'primeng/table';
+import { CommonModule } from '@angular/common';
 
 type NumSuffixes = 'K' | 'M' | 'B' | 'T' | 'q' | 'Q' | 's' | 'S';
 
@@ -41,7 +42,7 @@ interface StatData {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [TableModule],
+  imports: [TableModule, CommonModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
@@ -84,15 +85,21 @@ export class AppComponent implements OnInit {
           !statData.map((data) => data.dateOfRun).includes(statObj.dateOfRun)
         ) {
           console.log('SAVING');
-          statData.push(statObj);
+          this.statData.push(statObj);
+
           this._localStorageService.saveData(
             this.DATA_STORE_KEY,
-            JSON.stringify(statData)
+            JSON.stringify(this.statData)
           );
         } else {
           console.log('ALREADY SAVED');
         }
       });
+  }
+
+  getDate(epoch: number) {
+    const dt = new Date(epoch);
+    return `${dt.getUTCFullYear()}-${dt.getUTCMonth()}-${dt.getUTCDay()}`;
   }
 
   private _createStatObject(text: string, dateOfRun: number): StatData {

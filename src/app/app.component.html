@@ -13,20 +13,24 @@
   >
     <ng-template pTemplate="header">
       <tr>
+        <th pResizableColumn pSortableColumn="dateOfRun">Date</th>
         <th pResizableColumn pSortableColumn="tier">Tier</th>
-        <th pResizableColumn pSortableColumn="cash">Cash</th>
         <th pResizableColumn pSortableColumn="cashPerHour">Cash/h</th>
         <th pResizableColumn pSortableColumn="coins">Coins</th>
-        <th pResizableColumn pSortableColumn="coins">Coins/h</th>
+        <th pResizableColumn pSortableColumn="coinsPerHour">Coins/h</th>
+        <th pResizableColumn pSortableColumn="cellsPerHour">Cells/h</th>
+        <th pResizableColumn pSortableColumn="sharsPerHour">Shards/h</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-stat>
       <tr>
+        <td>{{ getDate(stat.dateOfRun) }}</td>
         <td>{{ stat.tier }}</td>
-        <td>{{ stat.cash }}</td>
         <td>{{ stat.cashPerHour }}</td>
         <td>{{ stat.coins }}</td>
         <td>{{ stat.cph }}</td>
+        <td>{{ stat.cellsPerHour }}</td>
+        <td>{{ stat.shardsPerHour }}</td>
       </tr>
     </ng-template>
   </p-table>
