@@ -99,7 +99,7 @@ export class AppComponent implements OnInit {
 
   getDate(epoch: number) {
     const dt = new Date(epoch);
-    return `${dt.getUTCFullYear()}-${dt.getUTCMonth()}-${dt.getUTCDay()}`;
+    return `${dt.getUTCFullYear()}-${dt.getUTCMonth()}-${dt.getDate()}`;
   }
 
   private _createStatObject(text: string, dateOfRun: number): StatData {
