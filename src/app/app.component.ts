@@ -119,18 +119,22 @@ export class AppComponent implements OnInit {
       tier: this._findData('Tier', text),
       time,
       wave,
-      cash: alnp.transform(cash),
-      cashPerHour: alnp.transform(cash / time),
-      cashPerWave: alnp.transform(cash / wave),
-      coins: alnp.transform(coins),
-      cph: alnp.transform(coins / time),
-      cpw: alnp.transform(coins / wave),
-      cells: alnp.transform(cells),
-      cellsPerHour: alnp.transform(cells / time),
-      cellsPerWave: alnp.transform(cells / wave),
-      shards: alnp.transform(shards),
-      shardsPerHour: alnp.transform(shards / time),
-      shardsPerWave: alnp.transform(shards / wave),
+      cash: Number.isNaN(cash) ? 'NaN' : alnp.transform(cash),
+      cashPerHour: Number.isNaN(cash) ? 'NaN' : alnp.transform(cash / time),
+      cashPerWave: Number.isNaN(cash) ? 'NaN' : alnp.transform(cash / wave),
+      coins: Number.isNaN(coins) ? 'NaN' : alnp.transform(coins),
+      cph: Number.isNaN(coins) ? 'NaN' : alnp.transform(coins / time),
+      cpw: Number.isNaN(coins) ? 'NaN' : alnp.transform(coins / wave),
+      cells: Number.isNaN(cells) ? 'NaN' : alnp.transform(cells),
+      cellsPerHour: Number.isNaN(cells) ? 'NaN' : alnp.transform(cells / time),
+      cellsPerWave: Number.isNaN(cells) ? 'NaN' : alnp.transform(cells / wave),
+      shards: Number.isNaN(shards) ? 'NaN' : alnp.transform(shards),
+      shardsPerHour: Number.isNaN(shards)
+        ? 'NaN'
+        : alnp.transform(shards / time),
+      shardsPerWave: Number.isNaN(shards)
+        ? 'NaN'
+        : alnp.transform(shards / wave),
       notes: '',
     };
   }
@@ -204,19 +208,19 @@ export class AppComponent implements OnInit {
 
     let base = parseFloat(numberStr);
     if (numberStr.match(/K/)) {
-      return Math.round(base * 1000);
+      return Number(Math.round(base * 1000));
     } else if (numberStr.match(/M/)) {
-      return Math.round(base * 1000000);
+      return Number(Math.round(base * 1000000));
     } else if (numberStr.match(/B/)) {
-      return Math.round(base * 1000000000);
+      return Number(Math.round(base * 1000000000));
     } else if (numberStr.match(/T/)) {
-      return Math.round(base * 1000000000000);
+      return Number(Math.round(base * 1000000000000));
     } else if (numberStr.match(/q/)) {
-      return Math.round(base * 1000000000000000);
+      return Number(Math.round(base * 1000000000000000));
     } else if (numberStr.match(/Q/)) {
-      return Math.round(base * 1000000000000000000);
+      return Number(Math.round(base * 1000000000000000000));
     }
 
-    return base;
+    return Number(base);
   }
 }
